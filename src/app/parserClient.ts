@@ -9,17 +9,10 @@ type Pending = {
 let worker: Worker | null = null
 let pending: Pending | null = null
 let nextRequestId = 1
-let workerFailed = false
 
-function getWorker(): Worker | null {
-  if (workerFailed) return null
+function getWorker(): Worker {
   if (worker) return worker
-  try {
-    worker = new Worker(new URL('../workers/solidityParser.worker.ts', import.meta.url), { type: 'module' })
-  } catch {
-    workerFailed = true
-    return null
-  }
+  worker = new Worker(new URL('../workers/solidityParser.worker.ts', import.meta.url), { type: 'module' })
   worker.onmessage = (ev: MessageEvent) => {
     const data = ev.data as { requestId?: number; result?: ParseResult }
     const nextPending = pending
@@ -38,28 +31,17 @@ function getWorker(): Worker | null {
   worker.onerror = (err) => {
     const nextPending = pending
     pending = null
-    workerFailed = true
-    worker = null
     nextPending?.reject(err)
   }
   return worker
 }
 
-export async function parseSolidity(code: string): Promise<ParseResult> {
+export function parseSolidity(code: string): Promise<ParseResult> {
   if (pending) pending.reject(new Error('Parser was superseded'))
   const w = getWorker()
-  if (!w) {
-    const { parseSoliditySource } = await import('./solidityParser')
-    return parseSoliditySource(code)
-  }
   return new Promise<ParseResult>((resolve, reject) => {
     const requestId = nextRequestId++
     pending = { requestId, resolve, reject }
     w.postMessage({ code, requestId })
-  }).catch(async () => {
-    workerFailed = true
-    worker = null
-    const { parseSoliditySource } = await import('./solidityParser')
-    return parseSoliditySource(code)
   })
 }
