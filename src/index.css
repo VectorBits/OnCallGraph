@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --cp-bg: 10 12 16;
+  --cp-panel: 255 255 255;
+  --cp-border: 255 255 255;
+  --cp-text: 236 240 246;
+  --cp-muted: 155 169 184;
+  --cp-brand: 88 101 242;
+  --cp-accent: 34 211 238;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(1200px 800px at 20% 10%, rgba(88, 101, 242, 0.18), transparent 55%),
+    radial-gradient(900px 700px at 80% 20%, rgba(34, 211, 238, 0.12), transparent 60%),
+    rgb(var(--cp-bg));
+  color: rgb(var(--cp-text));
+}
+
+::selection {
+  background: rgba(88, 101, 242, 0.35);
+}
