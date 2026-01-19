@@ -298,6 +298,36 @@ function GraphInner() {
                 </div>
               ) : null}
             </div>
+            <div className="flex items-center gap-2">
+              <a
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white/80 backdrop-blur-xl hover:bg-white/10"
+                href="https://github.com/VectorBits/OnCallGraph"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 2a10 10 0 0 0-3.16 19.48c.5.09.68-.22.68-.48v-1.7c-2.77.6-3.35-1.34-3.35-1.34-.45-1.13-1.1-1.44-1.1-1.44-.9-.62.07-.6.07-.6 1 .07 1.52 1.03 1.52 1.03.9 1.52 2.36 1.08 2.94.83.1-.64.36-1.08.65-1.33-2.22-.25-4.56-1.12-4.56-4.98 0-1.1.4-2.01 1.02-2.72-.1-.26-.45-1.3.1-2.7 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.9-1.29 2.74-1.02 2.74-1.02.56 1.4.2 2.44.1 2.7.63.7 1.02 1.62 1.02 2.72 0 3.87-2.35 4.73-4.58 4.98.37.32.7.94.7 1.9v2.82c0 .27.18.58.69.48A10 10 0 0 0 12 2z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </a>
+              <a
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white/80 backdrop-blur-xl hover:bg-white/10"
+                href="https://x.com/VectorBits"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="X"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M4 4h3.6l4.1 5.5L16 4h4l-6.6 7.9L20 20h-3.6l-4.6-6.2L8 20H4l7.1-8.5L4 4z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>

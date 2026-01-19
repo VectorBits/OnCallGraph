@@ -42,3 +42,6 @@ npm run lint
 ## Notes
 - Parsing and storage are local to the browser.
 - Very large contracts may increase CPU and memory usage on the client.
+
+## Donation
+0x46f0e8980761c60f549a488f12a9910163e2a6e9
