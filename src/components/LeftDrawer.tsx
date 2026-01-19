@@ -580,7 +580,7 @@ export function LeftDrawer() {
           </div>
 
           <div className="border-b border-white/10 px-3 py-2">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {(
                 [
                   { key: 'all', label: 'All', count: visibleFunctions.length },
@@ -594,7 +594,7 @@ export function LeftDrawer() {
                 <button
                   key={f.key}
                   className={[
-                    'rounded-full border px-3 py-1 text-xs',
+                    'rounded-full border px-2.5 py-1 text-[11px]',
                     visibilityFilter === f.key ? 'border-white/20 bg-white/10 text-white/90' : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10',
                   ].join(' ')}
                   onClick={() => setVisibilityFilter(f.key)}
@@ -605,7 +605,7 @@ export function LeftDrawer() {
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-auto px-3 py-3">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 py-3">
             {filteredFunctions.length === 0 ? (
               <div className="rounded-lg border border-dashed border-white/10 px-3 py-3 text-sm text-white/50">
                 No functions found.
@@ -619,7 +619,7 @@ export function LeftDrawer() {
                     <button
                       key={n.id}
                       className={[
-                        'flex items-center gap-2 rounded-lg border px-2 py-2 text-left',
+                        'flex min-w-0 w-full items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left',
                         n.id === selectedNodeId ? 'border-white/20 bg-white/10' : 'border-white/10 bg-white/5 hover:bg-white/10',
                       ].join(' ')}
                       onClick={() => {
@@ -628,15 +628,15 @@ export function LeftDrawer() {
                       }}
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm text-white/85">{labelFromNodeId(n.id)}</div>
-                        <div className="truncate text-[11px] text-white/50">{data.contractName}</div>
+                        <div className="truncate text-[13px] text-white/85">{labelFromNodeId(n.id)}</div>
+                        <div className="truncate text-[10px] text-white/50">{data.contractName}</div>
                       </div>
                       {hasNote ? (
-                        <div className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+                        <div className="shrink-0 rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/70">
                           Note
                         </div>
                       ) : null}
-                      <div className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+                      <div className="shrink-0 rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-white/70">
                         {data.visibility}
                       </div>
                     </button>

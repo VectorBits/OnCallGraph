@@ -215,17 +215,23 @@ function mergeGraph(panel: Panel, parsed: ParseResult): Pick<Panel, 'nodes' | 'e
 
   const present = new Set(presentIds)
   const previousTrashedKeeping = panel.trashedNodeIds.filter((id) => !present.has(id))
-  // FIX: Do NOT automatically trash missing nodes if we have a successful parse result but the node is just missing.
-  // The original logic assumed "missing in parse result" == "deleted by user", but that's risky if the parser misses something.
-  // However, for a "sync" operation, if it's not in the code, it's gone.
-  // We'll stick to the "sync" semantics: if it's not in the new parse, it's trash.
-  const newlyTrashed = Array.from(existingById.keys()).filter((id) => !present.has(id))
+  let hasOverlap = false
+  for (const id of existingById.keys()) {
+    if (present.has(id)) {
+      hasOverlap = true
+      break
+    }
+  }
+  const isReplace = present.size > 0 && existingById.size > 0 && !hasOverlap
+  const newlyTrashed = isReplace ? [] : Array.from(existingById.keys()).filter((id) => !present.has(id))
   const nextTrashed = uniq([...previousTrashedKeeping, ...newlyTrashed])
   for (const id of nextTrashed) trashed.add(id)
 
-  for (const [id, existing] of existingById) {
-    if (present.has(id)) continue
-    nextNodes.push(existing)
+  if (!isReplace) {
+    for (const [id, existing] of existingById) {
+      if (present.has(id)) continue
+      nextNodes.push(existing)
+    }
   }
 
   const nextEdges: CallEdge[] = []
