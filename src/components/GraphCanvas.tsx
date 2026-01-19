@@ -172,7 +172,7 @@ function GraphInner() {
         const w = node.width ?? 0
         const h = node.height ?? 0
         if (w > 0 && h > 0) {
-          setCenter(abs.x + w / 2, abs.y + h / 2, { duration: 420 })
+          setCenter(abs.x + w / 2, abs.y + h / 2, { duration: 420, zoom: 1.2 })
           return
         }
       }
@@ -207,7 +207,7 @@ function GraphInner() {
         const w = node.width ?? 0
         const h = node.height ?? 0
         if (w > 0 && h > 0) {
-          setCenter(abs.x + w / 2, abs.y + h / 2, { duration: 0 })
+          setCenter(abs.x + w / 2, abs.y + h / 2, { duration: 0, zoom: 1.2 })
         }
         return
       }

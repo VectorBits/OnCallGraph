@@ -1,4 +1,4 @@
-import parser from 'solidity-parser-antlr'
+import { parse, visit } from '@solidity-parser/parser'
 
 type SolidityVisibility = 'public' | 'private' | 'internal' | 'external' | 'unknown'
 
@@ -78,12 +78,13 @@ function parseSoliditySource(code: string): ParseResult {
 
   let ast: unknown
   try {
-    ast = parser.parse(code, { tolerant: true, range: true, loc: false })
+    ast = parse(code, { tolerant: true, range: true, loc: false })
   } catch {
+    // console.error('Parse error:', e)
     return { functions, edges }
   }
 
-  parser.visit(ast as Record<string, unknown>, {
+  visit(ast as Record<string, unknown>, {
     ContractDefinition: (node: unknown) => {
       if (!isRecord(node)) return
       const contractName = readString(node.name) ?? 'Contract'
@@ -143,7 +144,7 @@ function parseSoliditySource(code: string): ParseResult {
   for (const fn of functions) {
     const body = bodiesById.get(fn.id)
     if (!body) continue
-    parser.visit(body as Record<string, unknown>, {
+    visit(body as Record<string, unknown>, {
       FunctionCall: (node: unknown) => {
         if (!isRecord(node)) return
         const expression = isRecord(node.expression) ? node.expression : null

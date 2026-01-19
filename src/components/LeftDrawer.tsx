@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import Editor from '@monaco-editor/react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { parseSolidity } from '../app/parserClient'
 import { createEncryptedShareHash } from '../app/persistence'
 import { useAppStore } from '../app/store'
 import type { SolidityVisibility } from '../app/types'
 import { GlassPanel } from './GlassPanel'
+
+const MonacoEditor = lazy(() => import('@monaco-editor/react'))
 
 type EditorApi = {
   focus: () => void
@@ -175,7 +176,9 @@ export function LeftDrawer() {
   }, [functionsQuery, visibilityFilter, visibleFunctions])
 
   useEffect(() => {
-    lastSyncedRef.current = activePanel.code
+    const state = useAppStore.getState()
+    const panel = state.panels.find((p) => p.id === activePanelId) ?? state.panels[0]
+    if (panel) lastSyncedRef.current = panel.code
   }, [activePanelId])
 
   useEffect(() => {
@@ -372,26 +375,28 @@ export function LeftDrawer() {
           ) : null}
 
           <div className="min-h-0 flex-1">
-            <Editor
-              height="100%"
-              defaultLanguage="sol"
-              value={activePanel.code}
-              onChange={(v) => actions.setCode(v ?? '')}
-              onMount={(editor) => {
-                editorRef.current = editor as unknown as EditorApi
-              }}
-              options={{
-                fontSize: 13,
-                minimap: { enabled: false },
-                wordWrap: 'on',
-                scrollBeyondLastLine: false,
-                renderLineHighlight: 'gutter',
-                tabSize: 2,
-                padding: { top: 16, bottom: 16 },
-                readOnly: !canMutate,
-              }}
-              theme="vs-dark"
-            />
+            <Suspense fallback={<div className="h-full w-full bg-black/20" />}>
+              <MonacoEditor
+                height="100%"
+                defaultLanguage="sol"
+                value={activePanel.code}
+                onChange={(value: string | undefined) => actions.setCode(value ?? '')}
+                onMount={(editor: unknown) => {
+                  editorRef.current = editor as EditorApi
+                }}
+                options={{
+                  fontSize: 13,
+                  minimap: { enabled: false },
+                  wordWrap: 'on',
+                  scrollBeyondLastLine: false,
+                  renderLineHighlight: 'gutter',
+                  tabSize: 2,
+                  padding: { top: 16, bottom: 16 },
+                  readOnly: !canMutate,
+                }}
+                theme="vs-dark"
+              />
+            </Suspense>
           </div>
         </>
       ) : tab === 'panels' ? (

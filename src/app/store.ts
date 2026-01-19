@@ -214,7 +214,13 @@ function mergeGraph(panel: Panel, parsed: ParseResult): Pick<Panel, 'nodes' | 'e
   }
 
   const present = new Set(presentIds)
-  const nextTrashed = uniq([...panel.trashedNodeIds, ...Array.from(existingById.keys()).filter((id) => !present.has(id))])
+  const previousTrashedKeeping = panel.trashedNodeIds.filter((id) => !present.has(id))
+  // FIX: Do NOT automatically trash missing nodes if we have a successful parse result but the node is just missing.
+  // The original logic assumed "missing in parse result" == "deleted by user", but that's risky if the parser misses something.
+  // However, for a "sync" operation, if it's not in the code, it's gone.
+  // We'll stick to the "sync" semantics: if it's not in the new parse, it's trash.
+  const newlyTrashed = Array.from(existingById.keys()).filter((id) => !present.has(id))
+  const nextTrashed = uniq([...previousTrashedKeeping, ...newlyTrashed])
   for (const id of nextTrashed) trashed.add(id)
 
   for (const [id, existing] of existingById) {
@@ -229,7 +235,7 @@ function mergeGraph(panel: Panel, parsed: ParseResult): Pick<Panel, 'nodes' | 'e
       id: `${e.source}->${e.target}`,
       source: e.source,
       target: e.target,
-      type: 'bezier',
+      type: 'default',
     })
   }
 
@@ -303,11 +309,16 @@ function computeHighlight(panel: Panel, selectedNodeId: string | null): {
 
   const highlightNodeIds = new Set<string>([selectedNodeId])
   const queue: string[] = [selectedNodeId]
-  while (queue.length) {
-    const current = queue.shift()!
+  for (let i = 0; i < queue.length; i++) {
+    const current = queue[i]
     const outs = forward.get(current) ?? []
     const ins = backward.get(current) ?? []
-    for (const next of [...outs, ...ins]) {
+    for (const next of outs) {
+      if (highlightNodeIds.has(next)) continue
+      highlightNodeIds.add(next)
+      queue.push(next)
+    }
+    for (const next of ins) {
       if (highlightNodeIds.has(next)) continue
       highlightNodeIds.add(next)
       queue.push(next)
